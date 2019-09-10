@@ -8,8 +8,10 @@ dotenv.config();
 
 const secret = process.env.SECRET;
 const repo = process.env.REPO;
-const ghUrl = `https://${process.env.GH_USERNAME}:${process.env.GH_TOKEN}@github.com/${repo}.git --all `;
+const ghUrl = `https://${process.env.GH_USERNAME}:${process.env.GH_TOKEN}@github.com/${repo}.git`;
 const port = process.env.PORT;
+const deployBranch = process.env.GH_DEPLOY_BRANCH;
+const hooksBranch = process.env.GH_HOOKS_BRANCH;
 const signatureHeader = "x-hub-signature";
 
 function signData(secret: string, data: string) {
@@ -23,7 +25,12 @@ function signData(secret: string, data: string) {
 }
 
 function verifySignature(secret: string, data: string, signature: string) {
-  return Buffer.compare(new Buffer(signature), new Buffer(signData(secret, data))) === 0;
+  return (
+    Buffer.compare(
+      new Buffer(signature),
+      new Buffer(signData(secret, data))
+    ) === 0
+  );
 }
 
 const app = express();
@@ -37,8 +44,15 @@ app.post("/github/push", function(req, res) {
     ] || "") as string)
   ) {
     console.error("Failed to verify signature");
-    process.exit(1);
+    return;
   }
+
+  if (req.body.ref !== `refs/heads/${hooksBranch}`) {
+    console.info(`Ignoring ref ${req.body.ref}`);
+    return;
+  }
+
+  exec(`rm -rf ${repo} && git clone ${ghUrl} && cd ${repo} && npm i && npm run build`);
 
   res.json(req.body);
 });
