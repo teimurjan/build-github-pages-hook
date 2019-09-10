@@ -39,19 +39,6 @@ function verifySignature(secret: string, data: string, signature: string) {
 const app = express();
 app.use(bodyParser.json());
 
-const execAsync = (cmd: string) =>
-  new Promise((resolve, reject) =>
-    exec(cmd, (err, stdout) => {
-      console.log(`\nEXECUTING SHELL COMMANDS:\n${cmd}\n`);
-
-      if (err) {
-        reject(err);
-      }
-
-      resolve(stdout);
-    })
-  );
-
 let isProcessing = false;
 
 app.post("/github/push", async function(req, res) {
@@ -76,7 +63,7 @@ app.post("/github/push", async function(req, res) {
   }
 
   isProcessing = true;
-  const process = exec(
+  exec(
     `
       rm -rf ${ghRepo}
       git clone ${ghRepoUrl}
@@ -92,7 +79,6 @@ app.post("/github/push", async function(req, res) {
       }
     }
   );
-  process.on("data", console.log);
 
   res.json(req.body);
 });
