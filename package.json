@@ -1,0 +1,42 @@
+{
+  "name": "build-github-pages-hook",
+  "version": "1.0.0",
+  "description": "A service which reacts to commits into a development repo by building and deploying to GH pages.",
+  "main": "index.ts",
+  "scripts": {
+    "build-ts": "tsc",
+    "postinstall": "npm run build-ts",
+    "serve": "node index.js",
+    "start": "npm run build-ts && npm run serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teimurjan/build-github-pages-hook.git"
+  },
+  "keywords": [
+    "github",
+    "gh-pages"
+  ],
+  "author": "teimurjan <teymurgg321@gmail.com> (https://teimurjan.github.io)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/teimurjan/build-github-pages-hook/issues"
+  },
+  "homepage": "https://github.com/teimurjan/build-github-pages-hook#readme",
+  "devDependencies": {
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^4.17.1",
+    "@types/node": "^12.7.4"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "buffer-equal-constant-time": "^1.0.1",
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.6.2"
+  },
+  "engines": {
+    "node": "10.16.1"
+  }
+}

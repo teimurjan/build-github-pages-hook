@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "removeComments": true,
+    "declaration": false,
+    "typeRoots": ["ttypes", "node_modules/@types"],
+    "lib": ["es2015"]
+  },
+  "exclude": ["node_modules"]
+}
