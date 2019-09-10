@@ -42,6 +42,8 @@ app.use(bodyParser.json());
 const execAsync = (cmd: string) =>
   new Promise((resolve, reject) =>
     exec(cmd, (err, stdout) => {
+      console.log(`\nEXECUTING SHELL COMMANDS:\n${cmd}\n`);
+
       if (err) {
         reject(err);
       }
@@ -67,14 +69,14 @@ app.post("/github/push", async function(req, res) {
   }
 
   try {
-    await execAsync(`rm -rf ${ghRepo}`);
-    await execAsync(`git clone ${ghRepoUrl}`);
-    console.log(await execAsync(`ls`));
-    await execAsync(`cd ${ghRepo}`);
-    console.log(await execAsync(`ls`));
-    await execAsync(`git checkout ${hooksBranch}`);
-    await execAsync(`npm i`);
-    await execAsync(`npm run build`);
+    await execAsync(`
+      rm -rf ${ghRepo}
+      git clone ${ghRepoUrl}
+      cd ${ghRepo}
+      git checkout ${hooksBranch}
+      npm i
+      npm run build
+    `);
   } catch (err) {
     console.error(err);
   }
