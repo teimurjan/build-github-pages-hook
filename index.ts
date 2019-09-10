@@ -76,20 +76,23 @@ app.post("/github/push", async function(req, res) {
   }
 
   isProcessing = true;
-  execAsync(`
+  const process = exec(
+    `
       rm -rf ${ghRepo}
       git clone ${ghRepoUrl}
       cd ${ghRepo}
       git checkout ${hooksBranch}
       npm i
       npm run build
-    `)
-    .catch(err => {
-      console.error(err);
-    })
-    .finally(() => {
+    `,
+    err => {
       isProcessing = false;
-    });
+      if (err) {
+        console.error(err);
+      }
+    }
+  );
+  process.on("data", console.log);
 
   res.json(req.body);
 });
