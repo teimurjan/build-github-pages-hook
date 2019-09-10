@@ -68,8 +68,9 @@ app.post("/github/push", async function(req, res) {
 
   try {
     await execAsync(`rm -rf ${ghRepo}`);
-    await execAsync(`git clone ${ghRepoUrl} && git checkout ${hooksBranch}`);
+    await execAsync(`git clone ${ghRepoUrl}`);
     await execAsync(`cd ${ghRepo}`);
+    await execAsync(`git checkout ${hooksBranch}`);
     await execAsync(`npm i`);
     await execAsync(`npm run build`);
   } catch (err) {
