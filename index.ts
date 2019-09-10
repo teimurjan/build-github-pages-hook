@@ -8,7 +8,8 @@ dotenv.config();
 
 const secret = process.env.SECRET;
 const repo = process.env.REPO;
-const ghUrl = `https://${process.env.GH_USERNAME}:${process.env.GH_TOKEN}@github.com/${repo}.git`;
+const ghRepoUrl = `https://github.com/${repo}.git`;
+const ghPushUrl = `https://${process.env.GH_USERNAME}:${process.env.GH_TOKEN}@github.com/${repo}.git`;
 const port = process.env.PORT;
 const deployBranch = process.env.GH_DEPLOY_BRANCH;
 const hooksBranch = process.env.GH_HOOKS_BRANCH;
@@ -65,7 +66,7 @@ app.post("/github/push", async function(req, res) {
 
   try {
     await execAsync(`rm -rf ${repo}`);
-    await execAsync(`git clone ${ghUrl}`);
+    await execAsync(`git clone ${ghRepoUrl} && git checkout ${hooksBranch}`);
     await execAsync(`cd ${repo}`);
     await execAsync(`npm i`);
     await execAsync(`npm run build`);
