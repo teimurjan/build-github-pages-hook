@@ -41,12 +41,12 @@ app.use(bodyParser.json());
 
 const execAsync = (cmd: string) =>
   new Promise((resolve, reject) =>
-    exec(cmd, err => {
+    exec(cmd, (err, stdout) => {
       if (err) {
         reject(err);
       }
 
-      resolve();
+      resolve(stdout);
     })
   );
 
@@ -69,7 +69,9 @@ app.post("/github/push", async function(req, res) {
   try {
     await execAsync(`rm -rf ${ghRepo}`);
     await execAsync(`git clone ${ghRepoUrl}`);
+    console.log(await execAsync(`ls`));
     await execAsync(`cd ${ghRepo}`);
+    console.log(await execAsync(`ls`));
     await execAsync(`git checkout ${hooksBranch}`);
     await execAsync(`npm i`);
     await execAsync(`npm run build`);
