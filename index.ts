@@ -1,7 +1,6 @@
 import * as dotenv from "dotenv";
 import * as crypto from "crypto";
 import * as express from "express";
-import bufferEq from "buffer-equal-constant-time";
 import * as bodyParser from "body-parser";
 import { exec } from "child_process";
 
@@ -24,7 +23,7 @@ function signData(secret: string, data: string) {
 }
 
 function verifySignature(secret: string, data: string, signature: string) {
-  return bufferEq(new Buffer(signature), new Buffer(signData(secret, data)));
+  return Buffer.compare(new Buffer(signature), new Buffer(signData(secret, data))) === 0;
 }
 
 const app = express();

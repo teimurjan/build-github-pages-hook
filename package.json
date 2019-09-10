@@ -24,15 +24,14 @@
   },
   "homepage": "https://github.com/teimurjan/build-github-pages-hook#readme",
   "dependencies": {
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^4.17.1",
+    "@types/node": "^12.7.4",
     "body-parser": "^1.19.0",
-    "buffer-equal-constant-time": "^1.0.1",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "ts-node": "^8.3.0",
-    "typescript": "^3.6.2",
-    "@types/dotenv": "^6.1.1",
-    "@types/express": "^4.17.1",
-    "@types/node": "^12.7.4"
+    "typescript": "^3.6.2"
   },
   "engines": {
     "node": "10.16.1"
