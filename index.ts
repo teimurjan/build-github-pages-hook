@@ -36,13 +36,18 @@ function verifySignature(secret: string, data: string, signature: string) {
 const app = express();
 app.use(bodyParser.json());
 
-const execCb = (error: ExecException | null) => {
-  if (error) {
-    console.error(error);
-  }
-};
+const execAsync = (cmd: string) =>
+  new Promise((resolve, reject) =>
+    exec(cmd, err => {
+      if (err) {
+        reject(err);
+      }
 
-app.post("/github/push", function(req, res) {
+      resolve();
+    })
+  );
+
+app.post("/github/push", async function(req, res) {
   if (
     secret &&
     !verifySignature(secret, JSON.stringify(req.body), (req.headers[
@@ -58,11 +63,15 @@ app.post("/github/push", function(req, res) {
     return;
   }
 
-  exec(`rm -rf ${repo}`, execCb);
-  exec(`git clone ${ghUrl}`, execCb);
-  exec(`cd ${repo}`, execCb);
-  exec(`npm i`, execCb);
-  exec(`npm run build`, execCb);
+  try {
+    await execAsync(`rm -rf ${repo}`);
+    await execAsync(`git clone ${ghUrl}`);
+    await execAsync(`cd ${repo}`);
+    await execAsync(`npm i`);
+    await execAsync(`npm run build`);
+  } catch (err) {
+    console.error(err);
+  }
 
   res.json(req.body);
 });
