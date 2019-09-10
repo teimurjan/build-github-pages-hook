@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 import * as crypto from "crypto";
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import { exec } from "child_process";
+import { exec, ExecException } from "child_process";
 
 dotenv.config();
 
@@ -36,6 +36,12 @@ function verifySignature(secret: string, data: string, signature: string) {
 const app = express();
 app.use(bodyParser.json());
 
+const execCb = (error: ExecException | null) => {
+  if (error) {
+    console.error(error);
+  }
+};
+
 app.post("/github/push", function(req, res) {
   if (
     secret &&
@@ -52,7 +58,11 @@ app.post("/github/push", function(req, res) {
     return;
   }
 
-  exec(`rm -rf ${repo} && git clone ${ghUrl} && cd ${repo} && npm i && npm run build`);
+  exec(`rm -rf ${repo}`, execCb);
+  exec(`git clone ${ghUrl}`, execCb);
+  exec(`cd ${repo}`, execCb);
+  exec(`npm i`, execCb);
+  exec(`npm run build`, execCb);
 
   res.json(req.body);
 });
