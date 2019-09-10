@@ -52,7 +52,14 @@ const execAsync = (cmd: string) =>
     })
   );
 
+let isProcessing = false;
+
 app.post("/github/push", async function(req, res) {
+  if (isProcessing) {
+    res.status(502).json({ message: "Service is busy" });
+    return;
+  }
+
   if (
     secret &&
     !verifySignature(secret, JSON.stringify(req.body), (req.headers[
@@ -68,18 +75,21 @@ app.post("/github/push", async function(req, res) {
     return;
   }
 
-  try {
-    await execAsync(`
+  isProcessing = true;
+  execAsync(`
       rm -rf ${ghRepo}
       git clone ${ghRepoUrl}
       cd ${ghRepo}
       git checkout ${hooksBranch}
       npm i
       npm run build
-    `);
-  } catch (err) {
-    console.error(err);
-  }
+    `)
+    .catch(err => {
+      console.error(err);
+    })
+    .finally(() => {
+      isProcessing = false;
+    });
 
   res.json(req.body);
 });
